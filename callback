@@ -1,0 +1,218 @@
+#include<iostream>
+
+//普通全局函数
+#if 0
+
+void printHelloWorld(int i) {
+    std::cout << "HelloWorld" << i << std::endl;
+}
+
+void printBye(int i) {
+    std::cout << "Bye" << i << std::endl;
+}
+
+void callback(int k, void(*func)(int i)) {
+    func(k);
+}
+
+int main() {
+    callback(1, printHelloWorld);
+    callback(2, printBye);
+}
+
+#endif
+
+
+//类普通成员函数 传入对象指针
+
+#if 0
+
+class Boss {
+public:
+    Boss() {}
+    ~Boss() {}
+
+    void doSomeThing(std::string s) {
+        std::cout << "boss:" << s << std::endl;
+    }
+
+private:
+
+};
+
+
+class Worker {
+public:
+    Worker() {}
+    ~Worker() {}
+
+    void getWork(Boss *boss,std::string question) {
+        std::cout << "worker getwork..." << std::endl;
+        boss->doSomeThing(question);
+        std::cout << "worker finish work..." << std::endl;
+    }
+private:
+
+};
+
+
+int main() {
+    Boss boss;
+    Worker worker;
+    worker.getWork(&boss, "zhengdawei");
+    return 0;
+}
+
+
+#endif
+
+
+//类普通成员函数传入函数指针
+#if 0
+#include <functional>
+
+typedef std::function<void(std::string)> Fun;
+
+class Boss {
+public:
+    Boss() {}
+    ~Boss() {}
+
+    void doSomeThing(std::string s) {
+        std::cout << "boss:" << s << std::endl;
+    }
+
+    Fun fun = std::bind(&Boss::doSomeThing, this, std::placeholders::_1);
+private:
+
+};
+
+
+class Worker {
+public:
+    Worker() {}
+    ~Worker() {}
+
+    void getWork(std::string s, Fun f) {
+        f(s);
+    }
+
+private:
+
+};
+
+
+int main() {
+    Boss boss;
+    Worker worker;
+
+    worker.getWork("zhengdawei", boss.fun);
+
+}
+
+#endif
+
+
+
+//类的普通成员函数
+#if 0
+#include <functional>
+
+typedef std::function<void(std::string)> Func;
+
+
+class Boss {
+public:
+    Boss() {}
+    ~Boss() {}
+
+    void doSomeWork(std::string s) {
+        std::cout << "Boss:" << s << std::endl;
+    }
+
+    Func func = std::bind(&Boss::doSomeWork, this, std::placeholders::_1);
+    
+
+private:
+
+};
+
+
+class Worker {
+public:
+    Worker() {}
+    ~Worker() {}
+
+    void getWork(Boss* boss,std::string s) {
+        boss->doSomeWork(s);
+    }
+
+    void getWork(Func func, std::string s) {
+        func(s);
+    }
+private:
+
+};
+
+int main() {
+    Boss boss;
+    Worker worker;
+    worker.getWork(&boss, "zhengdawei");
+    worker.getWork(boss.func, "zhengdawei2");
+    return 0;
+}
+
+#endif
+
+
+
+//类的静态成员函数
+#if 1
+
+#include <functional>
+
+typedef std::function<void(std::string)> Func;
+
+
+class Boss {
+public:
+    Boss() {}
+    ~Boss() {}
+
+    static void doSomeWork(std::string s) {
+        std::cout << "Boss:" << s << std::endl;
+    }
+
+    Func func = std::bind(&Boss::doSomeWork,std::placeholders::_1);
+
+
+private:
+
+};
+
+
+class Worker {
+public:
+    Worker() {}
+    ~Worker() {}
+
+    void getWork(Boss* boss, std::string s) {
+        boss->doSomeWork(s);
+    }
+
+    void getWork(Func func, std::string s) {
+        func(s);
+    }
+private:
+
+};
+
+int main() {
+    Boss boss;
+    Worker worker;
+    worker.getWork(&boss, "zhengdawei");
+    worker.getWork(boss.func, "zhengdawei2");
+    return 0;
+}
+
+#endif
